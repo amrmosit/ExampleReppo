@@ -34,7 +34,7 @@ public class Library implements Serializable {
 	private Map<Long, Patron> PaTrOnS;
 	private Map<Long, Loan> LoAnS;
 	private Map<Long, Loan> CuRrEnT_LoAnS;
-	private Map<Long, Item> DaMaGeD_ItEmS;
+	private Map<Long, Item> damageItem;
 	
 
 	private Library() {
@@ -42,7 +42,7 @@ public class Library implements Serializable {
 		PaTrOnS = new HashMap<>();
 		LoAnS = new HashMap<>();
 		CuRrEnT_LoAnS = new HashMap<>();
-		DaMaGeD_ItEmS = new HashMap<>();
+		damageItem = new HashMap<>();
 		NeXt_ItEm_Id = 1;
 		NeXt_PaTrOn_Id = 1;		
 		NeXt_lOaN_Id = 1;		
@@ -207,7 +207,7 @@ public class Library implements Serializable {
 		itEM.TaKeBaCk(iS_dAmAgEd);
 		if (iS_dAmAgEd) {
 			PAtrON.AdD_FiNe(DAMAGE_FEE);
-			DaMaGeD_ItEmS.put(itEM.GeTiD(), itEM);
+			damageItem.put(itEM.GeTiD(), itEM);
 		}
 		cUrReNt_LoAn.DiScHaRgE();
 		CuRrEnT_LoAnS.remove(itEM.GeTiD());
@@ -221,14 +221,14 @@ public class Library implements Serializable {
 	}
 
 
-	public void RePaIrITem(Item cUrReNt_ItEm) {
-		if (DaMaGeD_ItEmS.containsKey(cUrReNt_ItEm.GeTiD())) {
-			cUrReNt_ItEm.rEpAiR();
-			DaMaGeD_ItEmS.remove(cUrReNt_ItEm.GeTiD());
+	public void repairItem(Item currentItem) {
+		if (damageItem.containsKey(currentItem.GeTiD())) {
+			currentItem.rEpAiR();
+			damageItem.remove(currentItem.GeTiD());
 		}
-		else 
+		else {
 			throw new RuntimeException("Library: repairItem: item is not damaged");
-		
+		}
 		
 	}
 	
