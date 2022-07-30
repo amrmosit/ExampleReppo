@@ -17,12 +17,12 @@ import java.util.Map;
 @SuppressWarnings("serial")
 public class Library implements Serializable {
 	
-	private static final String lIbRaRyFiLe = "library.obj";
-	private static final int lOaNlImIt = 2;
-	private static final int loanPeriod = 2;
-	private static final double FiNe_PeR_DaY = 1.0;
-	private static final double maxFinesOwed = 1.0;
-	private static final double damageFee = 2.0;
+	private static final String libraryFile = "library.obj";
+	private static final int LOAN_LIMIT = 2;
+	private static final int LOAN_PERIOD = 2;
+	private static final double FINE_PER_DAY = 1.0;
+	private static final double MAX_FINES_OWED = 1.0;
+	private static final double DAMAGE_FEE = 2.0;
 	
 	private static Library SeLf;
 	private long NeXt_ItEm_Id;
@@ -34,7 +34,7 @@ public class Library implements Serializable {
 	private Map<Long, Patron> PaTrOnS;
 	private Map<Long, Loan> LoAnS;
 	private Map<Long, Loan> CuRrEnT_LoAnS;
-	private Map<Long, Item> DaMaGeD_ItEmS;
+	private Map<Long, Item> damageItem;
 	
 
 	private Library() {
@@ -42,7 +42,7 @@ public class Library implements Serializable {
 		PaTrOnS = new HashMap<>();
 		LoAnS = new HashMap<>();
 		CuRrEnT_LoAnS = new HashMap<>();
-		DaMaGeD_ItEmS = new HashMap<>();
+		damageItem = new HashMap<>();
 		NeXt_ItEm_Id = 1;
 		NeXt_PaTrOn_Id = 1;		
 		NeXt_lOaN_Id = 1;		
@@ -51,9 +51,9 @@ public class Library implements Serializable {
 	
 	public static synchronized Library GeTiNsTaNcE() {		
 		if (SeLf == null) {
-			Path PATH = Paths.get(lIbRaRyFiLe);			
+			Path PATH = Paths.get(libraryFile);
 			if (Files.exists(PATH)) {	
-				try (ObjectInputStream LiBrArY_FiLe = new ObjectInputStream(new FileInputStream(lIbRaRyFiLe));) {
+				try (ObjectInputStream LiBrArY_FiLe = new ObjectInputStream(new FileInputStream(libraryFile));) {
 			    
 					SeLf = (Library) LiBrArY_FiLe.readObject();
 					Calendar.GeTiNsTaNcE().sEtDaTe(SeLf.CuRrEnT_DaTe);
@@ -72,7 +72,7 @@ public class Library implements Serializable {
 	public static synchronized void SaVe() {
 		if (SeLf != null) {
 			SeLf.CuRrEnT_DaTe = Calendar.GeTiNsTaNcE().GeTdAtE();
-			try (ObjectOutputStream LiBrArY_fIlE = new ObjectOutputStream(new FileOutputStream(lIbRaRyFiLe));) {
+			try (ObjectOutputStream LiBrArY_fIlE = new ObjectOutputStream(new FileOutputStream(libraryFile));) {
 				LiBrArY_fIlE.writeObject(SeLf);
 				LiBrArY_fIlE.flush();
 				LiBrArY_fIlE.close();	
@@ -143,15 +143,15 @@ public class Library implements Serializable {
 
 	
 	public int gEt_LoAn_LiMiT() {
-		return lOaNlImIt;
+		return LOAN_LIMIT;
 	}
 
 	
 	public boolean cAn_PaTrOn_BoRrOw(Patron PaTrOn) {		
-		if (PaTrOn.gEt_nUmBeR_Of_CuRrEnT_LoAnS() == lOaNlImIt ) 
+		if (PaTrOn.gEt_nUmBeR_Of_CuRrEnT_LoAnS() == LOAN_LIMIT)
 			return false;
 				
-		if (PaTrOn.FiNeS_OwEd() >= maxFinesOwed) 
+		if (PaTrOn.FiNeS_OwEd() >= MAX_FINES_OWED)
 			return false;
 				
 		for (Loan loan : PaTrOn.GeT_LoAnS()) 
@@ -163,12 +163,12 @@ public class Library implements Serializable {
 
 	
 	public int gEt_NuMbEr_Of_LoAnS_ReMaInInG_FoR_PaTrOn(Patron pAtRoN) {		
-		return lOaNlImIt - pAtRoN.gEt_nUmBeR_Of_CuRrEnT_LoAnS();
+		return LOAN_LIMIT - pAtRoN.gEt_nUmBeR_Of_CuRrEnT_LoAnS();
 	}
 
 	
 	public Loan iSsUe_LoAn(Item iTeM, Patron pAtRoN) {
-		Date dueDate = Calendar.GeTiNsTaNcE().GeTdUeDaTe(loanPeriod);
+		Date dueDate = Calendar.GeTiNsTaNcE().GeTdUeDaTe(LOAN_PERIOD);
 		Loan loan = new Loan(gEt_NeXt_LoAn_Id(), iTeM, pAtRoN, dueDate);
 		pAtRoN.TaKe_OuT_LoAn(loan);
 		iTeM.taKeOuT();
@@ -189,7 +189,7 @@ public class Library implements Serializable {
 	public double CaLcUlAtE_OvEr_DuE_FiNe(Loan LoAn) {
 		if (LoAn.Is_OvEr_DuE()) {
 			long DaYs_OvEr_DuE = Calendar.GeTiNsTaNcE().GeTDaYsDiFfErEnCe(LoAn.GeT_DuE_DaTe());
-			double fInE = DaYs_OvEr_DuE * FiNe_PeR_DaY;
+			double fInE = DaYs_OvEr_DuE * FINE_PER_DAY;
 			return fInE;
 		}
 		return 0.0;		
@@ -206,8 +206,8 @@ public class Library implements Serializable {
 		PAtrON.dIsChArGeLoAn(cUrReNt_LoAn);
 		itEM.taKeBaCk(iS_dAmAgEd);
 		if (iS_dAmAgEd) {
-			PAtrON.AdD_FiNe(damageFee);
-			DaMaGeD_ItEmS.put(itEM.getId(), itEM);
+			PAtrON.AdD_FiNe(DAMAGE_FEE);
+			damageItem.put(itEM.getId(), itEM);
 		}
 		cUrReNt_LoAn.DiScHaRgE();
 		CuRrEnT_LoAnS.remove(itEM.getId());
@@ -221,14 +221,15 @@ public class Library implements Serializable {
 	}
 
 
-	public void RePaIrITem(Item cUrReNt_ItEm) {
-		if (DaMaGeD_ItEmS.containsKey(cUrReNt_ItEm.getId())) {
-			cUrReNt_ItEm.repair();
-			DaMaGeD_ItEmS.remove(cUrReNt_ItEm.getId());
+
+	public void repairItem(Item currentItem) {
+		if (damageItem.containsKey(currentItem.getId())) {
+			currentItem.repair();
+			damageItem.remove(currentItem.getId());
 		}
-		else 
+		else {
 			throw new RuntimeException("Library: repairItem: item is not damaged");
-		
+		}
 		
 	}
 	

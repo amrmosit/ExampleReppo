@@ -1,7 +1,9 @@
 /bin/
+<<<<<<< HEAD
 .idea/
 Person2Repo.iml
 library.obj
 out/
-
+ExampleReppo.iml
+>>>>>>> 953610a1c4e98567445eb05c628061c6f387f783
 

@@ -53,7 +53,7 @@ public class fIX_iTeM_cONTROL {
 			throw new RuntimeException("FixItemControl: cannot call itemInspected except in INSPECTING state");
 		
 		if (mUsT_FiX) 
-			LiBrArY.RePaIrITem(CuRrEnT_ItEm);
+			LiBrArY.repairItem(CuRrEnT_ItEm);
 		
 		CuRrEnT_ItEm = null;
 		Ui.SeTrEaDy();
